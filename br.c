@@ -10,7 +10,7 @@
 int main()
 {
 	unsigned short N, T, *c, i, k, nr;
-	unsigned x, r;
+	unsigned x, r, *s;
 
 	FILE *fin = fopen("br.in", "r");
 
@@ -22,10 +22,14 @@ int main()
 
 	c = (unsigned short*)calloc(N+1, sizeof(unsigned short));
 
+	s = (unsigned*)calloc(N+1, sizeof(unsigned));
+
 	for (i = 1; i <= N; i++) {
 		fscanf(fin, "%hu", &c[i]);
 
 		if (c[i] < 1 || c[i] > CMAX) { printf("Eroare valoare c[%hu]\n", i); return 3; }
+
+		s[i] = s[i-1] + c[i];
 	}
 	
 	FILE *fout = fopen("br.out", "w");
@@ -35,26 +39,32 @@ int main()
 
 		if (k < 1 || k > N || x < 1 || x > XMAX) { printf("Eroare valoare k sau x\n"); return 4; }
 
-		r = x, nr = 0;
+		if (x >= s[N]) nr = N;
+		else {
+			r = x, nr = 0;
 
-		while (c[k] <= r && nr < N) {
-			nr++;
-			
-			r -= c[k];
-			
-			k++;
+			while (c[k] <= r && nr < N) {
+				nr++;
+				
+				r -= c[k];
+				
+				k++;
 
-			if (k > N) k = 1;
+				if (k > N) k = 1;
+			}
 		}
 
 		fprintf(fout, "%hu\n", nr);
 	}
 
 	fclose(fin);
+
 	fclose(fout);
+
+	free(s);
 
 	free(c);
 
 	return 0;
 }
-// scor 70
+// scor 90
